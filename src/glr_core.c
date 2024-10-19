@@ -5,6 +5,7 @@
 
 typedef struct {
 	uint32_t	shdr;
+	uint32_t	vao;
 }glr_core_t;
 
 static glr_core_t GLR_core;
@@ -21,7 +22,41 @@ void glrInit
 /* Compile shaders */
 glrGenerateShaderProgram(&GLR_core.shdr, "..\\src\\glsl\\test.vert", "..\\src\\glsl\\test.frag");
 
+__gl(glGenVertexArrays(1, &GLR_core.vao));
+__gl(glBindVertexArray(GLR_core.vao));
 
+__gl(glEnableVertexAttribArray(0));
+__gl(glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Type, pos)));
+__gl(glVertexAttribBinding(0, 0));
+
+__gl(glEnableVertexAttribArray(1));
+__gl(glVertexAttribFormat(1, 4, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Type, clr)));
+__gl(glVertexAttribBinding(1, 0));
+
+__gl(glBindVertexArray(0));
+
+}
+
+
+/*
+ * Initializes the scene
+ */
+void glrInitScene
+	(
+	uint32_t clr
+	)
+{
+__gl(glClearColor
+		(
+		clr & 0xFF000000,
+		clr & 0x00FF0000,
+		clr & 0x0000FF00,
+		clr & 0x000000FF
+		));
+__gl(glClear(GL_COLOR_BUFFER_BIT));
+
+__gl(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
+__gl(glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 
 
@@ -31,7 +66,7 @@ glrGenerateShaderProgram(&GLR_core.shdr, "..\\src\\glsl\\test.vert", "..\\src\\g
 void glrInitTriangle
 	(
 	glrMeshType* mesh,
-	glrPos3Clr1Type* data,
+	glrPos3Clr4Type* data,
 	uint32_t cnt,
 	uint32_t* indices,
 	uint32_t  indexCount
@@ -43,22 +78,14 @@ if(!mesh)
 	return;
 	}
 
-__gl(glGenVertexArrays(1, &mesh->vao));
 __gl(glGenBuffers(1, &mesh->vbo));
 __gl(glGenBuffers(1, &mesh->ebo));
-__gl(glBindVertexArray(mesh->vao));
 
 __gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
 __gl(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indexCount, indices, GL_STATIC_DRAW));
 
 __gl(glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo));
 __gl(glBufferData(GL_ARRAY_BUFFER, sizeof(data[0]) * cnt, data, GL_STATIC_DRAW));
-
-__gl(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glrPos3Clr1Type), (void*)offsetof(glrPos3Clr1Type, pos)));
-__gl(glEnableVertexAttribArray(0));
-
-__gl(glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(glrPos3Clr1Type), (void*)offsetof(glrPos3Clr1Type, clr)));
-__gl(glEnableVertexAttribArray(1));
 
 __gl(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
@@ -72,8 +99,10 @@ void glrRenderTriangle
 	glrMeshType* mesh
 	)
 {
-__gl(glBindVertexArray(mesh->vao));
+__gl(glBindVertexArray(GLR_core.vao));
+__gl(glBindVertexBuffer(0, mesh->vbo, 0, sizeof(glrPos3Clr4Type)));
 __gl(glUseProgram(GLR_core.shdr));
+__gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
 __gl(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 __gl(glUseProgram(0));
 __gl(glBindVertexArray(0));

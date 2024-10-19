@@ -10,13 +10,21 @@ void glrInit
 	);
 
 
+/*
+ * Initializes the scene
+ */
+void glrInitScene
+	(
+	uint32_t clr
+	);
+
 /* 
  * Initializes a triangle
  */
 void glrInitTriangle
 	(
 	glrMeshType* mesh,
-	glrPos3Clr1Type* data,
+	glrPos3Clr4Type* data,
 	uint32_t cnt,
 	uint32_t* indices,
 	uint32_t  indexCount

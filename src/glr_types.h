@@ -11,6 +11,11 @@ typedef struct {
 	uint32_t	clr;
 	} glrPos3Clr1Type;
 
+typedef struct {
+	vec3		pos;
+	vec4		clr;
+	} glrPos3Clr4Type;
+
 
 typedef struct {
 	uint32_t	vao;
