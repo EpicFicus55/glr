@@ -9,7 +9,7 @@
 		err = glGetError(); \
 		if(err != GL_NO_ERROR)	\
 			{ \
-			printf("%s failed with %d\n.", #stmt, err); \
+			printf("%s failed with %d.\n", #stmt, err); \
 			} \
 		} while(0)
 #else

@@ -1,6 +1,9 @@
+#include "stb/stb_image.h"
+
 #include "glad/glad.h"
 #include "glr_core.h"
 #include "glr_shdr.h"
+#include "glr_texture.h"
 #include "glr_utils.h"
 
 typedef struct {
@@ -26,12 +29,16 @@ __gl(glGenVertexArrays(1, &GLR_core.vao));
 __gl(glBindVertexArray(GLR_core.vao));
 
 __gl(glEnableVertexAttribArray(0));
-__gl(glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Type, pos)));
+__gl(glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Tex2Type, pos)));
 __gl(glVertexAttribBinding(0, 0));
 
 __gl(glEnableVertexAttribArray(1));
-__gl(glVertexAttribFormat(1, 4, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Type, clr)));
+__gl(glVertexAttribFormat(1, 4, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Tex2Type, clr)));
 __gl(glVertexAttribBinding(1, 0));
+
+__gl(glEnableVertexAttribArray(2));
+__gl(glVertexAttribFormat(2, 2, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Tex2Type, tex)));
+__gl(glVertexAttribBinding(2, 0));
 
 __gl(glBindVertexArray(0));
 
@@ -48,10 +55,10 @@ void glrInitScene
 {
 __gl(glClearColor
 		(
-		clr & 0xFF000000,
-		clr & 0x00FF0000,
-		clr & 0x0000FF00,
-		clr & 0x000000FF
+		0.1f, /* Placeholder colors */
+		0.8f,
+		0.5f,
+		0.0f
 		));
 __gl(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -66,7 +73,7 @@ __gl(glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 void glrInitTriangle
 	(
 	glrMeshType* mesh,
-	glrPos3Clr4Type* data,
+	glrPos3Clr4Tex2Type* data,
 	uint32_t cnt,
 	uint32_t* indices,
 	uint32_t  indexCount
@@ -88,6 +95,8 @@ __gl(glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo));
 __gl(glBufferData(GL_ARRAY_BUFFER, sizeof(data[0]) * cnt, data, GL_STATIC_DRAW));
 
 __gl(glBindBuffer(GL_ARRAY_BUFFER, 0));
+
+mesh->albedo_tex = glrInitTexture("..\\Assets\\Textures\\container.jpg");
 }
 
 
@@ -100,7 +109,8 @@ void glrRenderTriangle
 	)
 {
 __gl(glBindVertexArray(GLR_core.vao));
-__gl(glBindVertexBuffer(0, mesh->vbo, 0, sizeof(glrPos3Clr4Type)));
+__gl(glBindTextureUnit(0, mesh->albedo_tex));
+__gl(glBindVertexBuffer(0, mesh->vbo, 0, sizeof(glrPos3Clr4Tex2Type)));
 __gl(glUseProgram(GLR_core.shdr));
 __gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
 __gl(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));

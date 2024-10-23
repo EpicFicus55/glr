@@ -9,14 +9,15 @@
 static const uint32_t  sWindowHeight = 500;
 static const uint32_t  sWindowWidth = 500;
 
-glrPos3Clr4Type triangleData[] = {
-    { -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
-    {  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-    {  0.0f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },
-    {  0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f }
+glrPos3Clr4Tex2Type triangleData[] = 
+    {
+    {  0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f }, 
+    {  0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,   1.0f, 0.0f }, 
+    { -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f }, 
+    { -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f, 1.0f }  
     };
 
-uint32_t indexData[] = { 0, 1, 2, 1, 2, 3 };
+uint32_t indexData[] = { 0, 1, 3, 1, 2, 3 };
 
 /*
  * Window creation function
@@ -38,7 +39,7 @@ glrInitTriangle(&triangle, triangleData, 4, indexData, 6);
 
 while(!glfwWindowShouldClose(wnd))
     {
-    glrInitScene(0x00000000);
+    glrInitScene(0x01050000);
     glrRenderTriangle(&triangle);
 
     glfwSwapBuffers(wnd);
