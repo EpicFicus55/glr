@@ -9,12 +9,44 @@
 static const uint32_t  sWindowHeight = 500;
 static const uint32_t  sWindowWidth = 500;
 
-glrPos3Clr4Tex2Type triangleData[] = 
+glrPos3Tex2Type triangleData[] = 
     {
-    {  0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f }, 
-    {  0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,   1.0f, 0.0f }, 
-    { -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f }, 
-    { -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f, 1.0f }  
+    { -0.5f, -0.5f, -0.5f,  0.0f, 0.0f },
+    {  0.5f, -0.5f, -0.5f,  1.0f, 0.0f },
+    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
+    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
+    { -0.5f,  0.5f, -0.5f,  0.0f, 1.0f },
+    { -0.5f, -0.5f, -0.5f,  0.0f, 0.0f },
+    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
+    {  0.5f, -0.5f,  0.5f,  1.0f, 0.0f },
+    {  0.5f,  0.5f,  0.5f,  1.0f, 1.0f },
+    {  0.5f,  0.5f,  0.5f,  1.0f, 1.0f },
+    { -0.5f,  0.5f,  0.5f,  0.0f, 1.0f },
+    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
+    { -0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
+    { -0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
+    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
+    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
+    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
+    { -0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
+    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
+    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
+    {  0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
+    {  0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
+    {  0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
+    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
+    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
+    {  0.5f, -0.5f, -0.5f,  1.0f, 1.0f },
+    {  0.5f, -0.5f,  0.5f,  1.0f, 0.0f },
+    {  0.5f, -0.5f,  0.5f,  1.0f, 0.0f },
+    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
+    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
+    { -0.5f,  0.5f, -0.5f,  0.0f, 1.0f },
+    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
+    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
+    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
+    { -0.5f,  0.5f,  0.5f,  0.0f, 0.0f },
+    { -0.5f,  0.5f, -0.5f,  0.0f, 1.0f }
     };
 
 uint32_t indexData[] = { 0, 1, 3, 1, 2, 3 };
@@ -30,12 +62,18 @@ GLFWwindow* createWindow
 
 int main(void)
 {
-GLFWwindow* wnd = createWindow(sWindowHeight, sWindowWidth);
+GLFWwindow* wnd = createWindow(sWindowWidth, sWindowHeight);
 glrMeshType triangle = { 0 };
 
 /* Setup */
 glrInit(sWindowHeight, sWindowWidth);
-glrInitTriangle(&triangle, triangleData, 4, indexData, 6);
+
+triangle.pos[0] = 0.0f;
+triangle.pos[1] = 0.0f;
+triangle.pos[2] = -2.0f;
+
+//glrInitTriangle(&triangle, triangleData, 4, indexData, 6, "..\\Assets\\Textures\\container.jpg");
+glrInitTriangle(&triangle, triangleData, 36, NULL, 0, "..\\Assets\\Textures\\container.jpg");
 
 while(!glfwWindowShouldClose(wnd))
     {

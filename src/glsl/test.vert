@@ -1,16 +1,17 @@
 #version 460 core
 
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec4 aClr;
-layout (location = 2) in vec2 aTexCoords;
+layout (location = 1) in vec2 aTexCoords;
 
-out vec4 vClr;
+uniform mat4 modelMat;
+uniform mat4 viewMat;
+uniform mat4 projMat;
+
 out vec2 vTexCoords;
 
 void main()
 {
-vClr = aClr;
 vTexCoords = aTexCoords;
-gl_Position = vec4( aPos, 1.0f );
+gl_Position = projMat * viewMat * modelMat * vec4( aPos, 1.0 );
 
 }

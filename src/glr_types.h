@@ -18,6 +18,11 @@ typedef struct {
 
 typedef struct {
 	vec3		pos;
+	vec2		tex;
+	} glrPos3Tex2Type;
+
+typedef struct {
+	vec3		pos;
 	vec4		clr;
 	vec2		tex;
 	} glrPos3Clr4Tex2Type;
@@ -27,6 +32,10 @@ typedef struct {
 	uint32_t	vao;
 	uint32_t	vbo;
 	uint32_t	ebo;
+
+	vec3		pos;
+
+	mat4		modelMat;
 
 	uint32_t	albedo_tex;
 } glrMeshType;

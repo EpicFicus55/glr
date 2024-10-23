@@ -69,7 +69,7 @@ __gl(glDeleteShader(fragShdr));
 /*
 Set a vec4 uniform.
 */
-void shdr_set_vec4_uniform
+void shdrSetVec4Uniform
 	(
 	unsigned int	shader,
 	const char*		name,
@@ -81,6 +81,26 @@ GLint location = 0;
 __gl(glUseProgram(shader));
 __gl(location = glGetUniformLocation(shader, name));
 __gl(glUniform4fv(location, 1, value));
+__gl(glUseProgram(0));
+
+}
+
+
+/*
+Set a mat4 uniform.
+*/
+void shdrSetMat4Uniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	mat4			value
+	)
+{
+GLint location = 0;
+
+__gl(glUseProgram(shader));
+__gl(location = glGetUniformLocation(shader, name));
+__gl(glUniformMatrix4fv(location, 1, GL_FALSE, value[0]));
 __gl(glUseProgram(0));
 
 }

@@ -7,8 +7,13 @@
 #include "glr_utils.h"
 
 typedef struct {
+	uint32_t	windowWidth;
+	uint32_t	windowHeight;
+
 	uint32_t	shdr;
 	uint32_t	vao;
+	mat4		viewMat;
+	mat4		projMat;
 }glr_core_t;
 
 static glr_core_t GLR_core;
@@ -22,6 +27,10 @@ void glrInit
 	uint32_t height
 	)
 {
+/* Set the window properties */
+GLR_core.windowWidth = width;
+GLR_core.windowHeight = height;
+
 /* Compile shaders */
 glrGenerateShaderProgram(&GLR_core.shdr, "..\\src\\glsl\\test.vert", "..\\src\\glsl\\test.frag");
 
@@ -29,18 +38,22 @@ __gl(glGenVertexArrays(1, &GLR_core.vao));
 __gl(glBindVertexArray(GLR_core.vao));
 
 __gl(glEnableVertexAttribArray(0));
-__gl(glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Tex2Type, pos)));
+__gl(glVertexAttribFormat(0, 3, GL_FLOAT, GL_FALSE, offsetof(glrPos3Tex2Type, pos)));
 __gl(glVertexAttribBinding(0, 0));
 
 __gl(glEnableVertexAttribArray(1));
-__gl(glVertexAttribFormat(1, 4, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Tex2Type, clr)));
+__gl(glVertexAttribFormat(1, 2, GL_FLOAT, GL_FALSE, offsetof(glrPos3Tex2Type, tex)));
 __gl(glVertexAttribBinding(1, 0));
 
-__gl(glEnableVertexAttribArray(2));
-__gl(glVertexAttribFormat(2, 2, GL_FLOAT, GL_FALSE, offsetof(glrPos3Clr4Tex2Type, tex)));
-__gl(glVertexAttribBinding(2, 0));
-
 __gl(glBindVertexArray(0));
+
+__gl(glViewport(0, 0, GLR_core.windowWidth, GLR_core.windowHeight));
+
+/* Initialize the View and Projection matrices */
+glm_mat4_identity(GLR_core.viewMat);
+glm_mat4_identity(GLR_core.projMat);
+
+glm_perspective(45.0f, (float)(GLR_core.windowWidth / GLR_core.windowHeight), 0.1f, 100.0f, GLR_core.projMat);
 
 }
 
@@ -73,10 +86,11 @@ __gl(glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 void glrInitTriangle
 	(
 	glrMeshType* mesh,
-	glrPos3Clr4Tex2Type* data,
+	glrPos3Tex2Type* data,
 	uint32_t cnt,
 	uint32_t* indices,
-	uint32_t  indexCount
+	uint32_t  indexCount,
+	char*	albedoPath
 	)
 {
 if(!mesh)
@@ -85,18 +99,30 @@ if(!mesh)
 	return;
 	}
 
+/* Initialize the buffers */
 __gl(glGenBuffers(1, &mesh->vbo));
-__gl(glGenBuffers(1, &mesh->ebo));
-
-__gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
-__gl(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indexCount, indices, GL_STATIC_DRAW));
 
 __gl(glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo));
 __gl(glBufferData(GL_ARRAY_BUFFER, sizeof(data[0]) * cnt, data, GL_STATIC_DRAW));
 
+if(indices)
+	{
+	__gl(glGenBuffers(1, &mesh->ebo));
+	__gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
+	__gl(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indexCount, indices, GL_STATIC_DRAW));
+	}
+
 __gl(glBindBuffer(GL_ARRAY_BUFFER, 0));
 
-mesh->albedo_tex = glrInitTexture("..\\Assets\\Textures\\container.jpg");
+/* Initialize the textures */
+mesh->albedo_tex = glrInitTexture(albedoPath);
+
+/* Initialize the model matrix */
+glm_mat4_identity(mesh->modelMat);
+glm_translate(mesh->modelMat, mesh->pos);
+
+shdrSetMat4Uniform(GLR_core.shdr, "modelMat", mesh->modelMat);
+
 }
 
 
@@ -108,12 +134,27 @@ void glrRenderTriangle
 	glrMeshType* mesh
 	)
 {
+shdrSetMat4Uniform(GLR_core.shdr, "viewMat", GLR_core.viewMat);
+shdrSetMat4Uniform(GLR_core.shdr, "projMat", GLR_core.projMat);
+
+__gl(glEnable(GL_DEPTH_TEST));
+
 __gl(glBindVertexArray(GLR_core.vao));
 __gl(glBindTextureUnit(0, mesh->albedo_tex));
-__gl(glBindVertexBuffer(0, mesh->vbo, 0, sizeof(glrPos3Clr4Tex2Type)));
+__gl(glBindVertexBuffer(0, mesh->vbo, 0, sizeof(glrPos3Tex2Type)));
 __gl(glUseProgram(GLR_core.shdr));
-__gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
-__gl(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+
+if(mesh->ebo)
+	{
+	__gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
+	__gl(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+	}
+else
+	{
+	__gl(glDrawArrays(GL_TRIANGLES, 0, 36));
+	}
 __gl(glUseProgram(0));
 __gl(glBindVertexArray(0));
+
+__gl(glDisable(GL_DEPTH_TEST));
 }

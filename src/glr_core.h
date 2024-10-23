@@ -24,10 +24,11 @@ void glrInitScene
 void glrInitTriangle
 	(
 	glrMeshType* mesh,
-	glrPos3Clr4Tex2Type* data,
+	glrPos3Tex2Type* data,
 	uint32_t cnt,
 	uint32_t* indices,
-	uint32_t  indexCount
+	uint32_t  indexCount,
+	char*	albedoPath
 	);
 
 /*

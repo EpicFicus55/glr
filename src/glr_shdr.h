@@ -16,9 +16,19 @@ void glrGenerateShaderProgram
 /*
 Set a vec4 uniform.
 */
-void shdr_set_vec4_uniform
+void shdrSetVec4Uniform
 	(
 	unsigned int	shader,
 	const char*		name,
 	vec4			value
+	);
+
+/*
+Set a mat4 uniform.
+*/
+void shdrSetMat4Uniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	mat4			value
 	);
