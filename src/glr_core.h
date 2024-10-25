@@ -1,3 +1,6 @@
+#pragma once
+
+#include "glr_camera.h"
 #include "glr_types.h"
 
 /*
@@ -7,6 +10,24 @@ void glrInit
 	(
 	uint32_t width,
 	uint32_t height
+	);
+
+/*
+ * Initializes the GLR rendering library
+ */
+void glrAttachCamera
+	(
+	glrCameraType* camera
+	);
+
+
+/*
+ * Idk man
+ */
+void glrUpdateCameraAngle
+	(
+    double      xPosIn,
+    double      yPosIn
 	);
 
 
@@ -19,9 +40,9 @@ void glrInitScene
 	);
 
 /* 
- * Initializes a triangle
+ * Initializes a mesh
  */
-void glrInitTriangle
+void glrInitMesh
 	(
 	glrMeshType* mesh,
 	glrPos3Tex2Type* data,
@@ -32,9 +53,9 @@ void glrInitTriangle
 	);
 
 /*
- * Renders a triangle
+ * Renders a mesh
  */
-void glrRenderTriangle
+void glrRenderMesh
 	(
 	glrMeshType* mesh
 	);

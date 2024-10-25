@@ -1,6 +1,7 @@
 #include "stb/stb_image.h"
 
 #include "glad/glad.h"
+#include "glr_camera.h"
 #include "glr_core.h"
 #include "glr_shdr.h"
 #include "glr_texture.h"
@@ -12,6 +13,9 @@ typedef struct {
 
 	uint32_t	shdr;
 	uint32_t	vao;
+
+	glrCameraType*	camera;
+
 	mat4		viewMat;
 	mat4		projMat;
 }glr_core_t;
@@ -53,7 +57,34 @@ __gl(glViewport(0, 0, GLR_core.windowWidth, GLR_core.windowHeight));
 glm_mat4_identity(GLR_core.viewMat);
 glm_mat4_identity(GLR_core.projMat);
 
-glm_perspective(45.0f, (float)(GLR_core.windowWidth / GLR_core.windowHeight), 0.1f, 100.0f, GLR_core.projMat);
+glm_perspective(45.0f, ((float)GLR_core.windowWidth / (float)GLR_core.windowHeight), 0.1f, 100.0f, GLR_core.projMat);
+
+}
+
+
+/*
+ * Initializes the GLR rendering library
+ */
+void glrAttachCamera
+	(
+	glrCameraType* camera
+	)
+{
+GLR_core.camera = camera;
+
+}
+
+
+/*
+ * Idk man
+ */
+void glrUpdateCameraAngle
+	(
+    double      xPosIn,
+    double      yPosIn
+	)
+{
+glrCameraMouseCallback(GLR_core.camera, xPosIn, yPosIn);
 
 }
 
@@ -81,9 +112,9 @@ __gl(glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
 
 /* 
- * Initializes a triangle
+ * Initializes a mesh
  */
-void glrInitTriangle
+void glrInitMesh
 	(
 	glrMeshType* mesh,
 	glrPos3Tex2Type* data,
@@ -127,14 +158,14 @@ shdrSetMat4Uniform(GLR_core.shdr, "modelMat", mesh->modelMat);
 
 
 /*
- * Renders a triangle
+ * Renders a mesh
  */
-void glrRenderTriangle
+void glrRenderMesh
 	(
 	glrMeshType* mesh
 	)
 {
-shdrSetMat4Uniform(GLR_core.shdr, "viewMat", GLR_core.viewMat);
+shdrSetMat4Uniform(GLR_core.shdr, "viewMat", GLR_core.camera->lookAtMatrix);
 shdrSetMat4Uniform(GLR_core.shdr, "projMat", GLR_core.projMat);
 
 __gl(glEnable(GL_DEPTH_TEST));
