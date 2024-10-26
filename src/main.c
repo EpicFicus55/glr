@@ -9,8 +9,8 @@
 #include "glr_core.h"
 #include "glr_camera.h"
 
-static const uint32_t  sWindowHeight = 600;
-static const uint32_t  sWindowWidth = 800;
+static const uint32_t  sWindowHeight = 1200;
+static const uint32_t  sWindowWidth = 1600;
 
 glrPos3Tex2Type triangleData[] = 
     {
@@ -95,14 +95,23 @@ glrMeshType triangle = { 0 };
 
 /* Setup */
 glrInit(sWindowWidth, sWindowHeight);
-glrInitCamera(&camera, cameraPos, cameraFront, cameraUp, 0.05f);
+glrInitCamera(&camera, cameraPos, cameraFront, cameraUp, 0.005f);
 glrAttachCamera(&camera);
 glfwSetCursorPosCallback(wnd, processGLFWMouse);
 
 triangle.pos[0] = 0.0f;
 triangle.pos[1] = 0.0f;
 triangle.pos[2] = -2.0f;
-glrInitMesh(&triangle, triangleData, 36, NULL, 0, "..\\Assets\\Textures\\container.jpg");
+glrInitMesh
+    (
+    &triangle,
+    GLR_POS3_TEX2_TYPE,
+    triangleData,
+    36, 
+    NULL, 
+    0, 
+    "..\\Assets\\Textures\\container.jpg"
+    );
 
 while(!glfwWindowShouldClose(wnd))
     {

@@ -9,6 +9,7 @@ add_executable(glr
     src/glr_shdr.c
     src/glr_texture.c
     src/glr_camera.c
+    src/glr_mesh.c
     )
 
 add_subdirectory(glfw)

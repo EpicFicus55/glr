@@ -39,18 +39,21 @@ void glrInitScene
 	uint32_t clr
 	);
 
-/* 
+
+/*
  * Initializes a mesh
  */
 void glrInitMesh
 	(
-	glrMeshType* mesh,
-	glrPos3Tex2Type* data,
-	uint32_t cnt,
-	uint32_t* indices,
-	uint32_t  indexCount,
-	char*	albedoPath
+	glrMeshType*	mesh,
+	glrVertDataType dataType,
+	void*			vertData,
+	uint32_t		vertCnt,
+	uint32_t*		indices,
+	uint32_t		indexCount,
+	char*			albedoPath
 	);
+
 
 /*
  * Renders a mesh

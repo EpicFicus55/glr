@@ -5,6 +5,7 @@
 #include "glr_core.h"
 #include "glr_shdr.h"
 #include "glr_texture.h"
+#include "glr_mesh.h"
 #include "glr_utils.h"
 
 typedef struct {
@@ -111,52 +112,6 @@ __gl(glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 
 
-/* 
- * Initializes a mesh
- */
-void glrInitMesh
-	(
-	glrMeshType* mesh,
-	glrPos3Tex2Type* data,
-	uint32_t cnt,
-	uint32_t* indices,
-	uint32_t  indexCount,
-	char*	albedoPath
-	)
-{
-if(!mesh)
-	{
-	printf("Invalid mesh pointer.\n");
-	return;
-	}
-
-/* Initialize the buffers */
-__gl(glGenBuffers(1, &mesh->vbo));
-
-__gl(glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo));
-__gl(glBufferData(GL_ARRAY_BUFFER, sizeof(data[0]) * cnt, data, GL_STATIC_DRAW));
-
-if(indices)
-	{
-	__gl(glGenBuffers(1, &mesh->ebo));
-	__gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
-	__gl(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indexCount, indices, GL_STATIC_DRAW));
-	}
-
-__gl(glBindBuffer(GL_ARRAY_BUFFER, 0));
-
-/* Initialize the textures */
-mesh->albedo_tex = glrInitTexture(albedoPath);
-
-/* Initialize the model matrix */
-glm_mat4_identity(mesh->modelMat);
-glm_translate(mesh->modelMat, mesh->pos);
-
-shdrSetMat4Uniform(GLR_core.shdr, "modelMat", mesh->modelMat);
-
-}
-
-
 /*
  * Renders a mesh
  */
@@ -165,14 +120,15 @@ void glrRenderMesh
 	glrMeshType* mesh
 	)
 {
+shdrSetMat4Uniform(GLR_core.shdr, "modelMat", mesh->modelMat);
 shdrSetMat4Uniform(GLR_core.shdr, "viewMat", GLR_core.camera->lookAtMatrix);
 shdrSetMat4Uniform(GLR_core.shdr, "projMat", GLR_core.projMat);
 
 __gl(glEnable(GL_DEPTH_TEST));
 
 __gl(glBindVertexArray(GLR_core.vao));
-__gl(glBindTextureUnit(0, mesh->albedo_tex));
-__gl(glBindVertexBuffer(0, mesh->vbo, 0, sizeof(glrPos3Tex2Type)));
+glrLoadMesh(mesh);
+
 __gl(glUseProgram(GLR_core.shdr));
 
 if(mesh->ebo)
