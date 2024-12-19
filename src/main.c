@@ -91,7 +91,8 @@ int main(void)
 {
 GLFWwindow* wnd = createWindow(sWindowWidth, sWindowHeight);
 glrCameraType camera = { 0 };
-glrMeshType triangle = { 0 };
+glrMeshType containerMesh = { 0 };
+glrMeshType containerMesh2 = { 0 };
 
 /* Setup */
 glrInit(sWindowWidth, sWindowHeight);
@@ -99,12 +100,28 @@ glrInitCamera(&camera, cameraPos, cameraFront, cameraUp, 0.005f);
 glrAttachCamera(&camera);
 glfwSetCursorPosCallback(wnd, processGLFWMouse);
 
-triangle.pos[0] = 0.0f;
-triangle.pos[1] = 0.0f;
-triangle.pos[2] = -2.0f;
+containerMesh.pos[0] = 0.0f;
+containerMesh.pos[1] = 0.0f;
+containerMesh.pos[2] = -2.0f;
+
+containerMesh2.pos[0] = 10.0f;
+containerMesh2.pos[1] = 3.0f;
+containerMesh2.pos[2] = -2.0f;
+
 glrInitMesh
     (
-    &triangle,
+    &containerMesh,
+    GLR_POS3_TEX2_TYPE,
+    triangleData,
+    36, 
+    NULL, 
+    0, 
+    "..\\Assets\\Textures\\container.jpg"
+    );
+
+glrInitMesh
+    (
+    &containerMesh2,
     GLR_POS3_TEX2_TYPE,
     triangleData,
     36, 
@@ -119,7 +136,9 @@ while(!glfwWindowShouldClose(wnd))
     processGLFWInput(wnd, &camera);
 
     glrInitScene(0x01050000);
-    glrRenderMesh(&triangle);
+
+    glrRenderMesh(&containerMesh);
+    glrRenderMesh(&containerMesh2);
 
     glfwSwapBuffers(wnd);
     glfwPollEvents();

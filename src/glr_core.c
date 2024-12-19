@@ -39,7 +39,7 @@ GLR_core.windowHeight = height;
 /* Compile shaders */
 glrGenerateShaderProgram(&GLR_core.shdr, "..\\src\\glsl\\test.vert", "..\\src\\glsl\\test.frag");
 
-__gl(glGenVertexArrays(1, &GLR_core.vao));
+__gl(glCreateVertexArrays(1, &GLR_core.vao));
 __gl(glBindVertexArray(GLR_core.vao));
 
 __gl(glEnableVertexAttribArray(0));
@@ -101,8 +101,8 @@ void glrInitScene
 __gl(glClearColor
 		(
 		0.1f, /* Placeholder colors */
-		0.8f,
-		0.5f,
+		0.1f,
+		0.1f,
 		0.0f
 		));
 __gl(glClear(GL_COLOR_BUFFER_BIT));
@@ -138,7 +138,7 @@ if(mesh->ebo)
 	}
 else
 	{
-	__gl(glDrawArrays(GL_TRIANGLES, 0, 36));
+	__gl(glDrawArrays(GL_TRIANGLES, 0, mesh->vertCnt));
 	}
 __gl(glUseProgram(0));
 __gl(glBindVertexArray(0));
