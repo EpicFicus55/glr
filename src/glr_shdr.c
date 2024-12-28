@@ -67,6 +67,43 @@ __gl(glDeleteShader(fragShdr));
 
 
 /*
+Set a float uniform.
+*/
+void shdrSetFloatUniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	float			value
+	)
+{
+GLint location = 0;
+
+__gl(glUseProgram(shader));
+__gl(location = glGetUniformLocation(shader, name));
+__gl(glUniform1f(location, value));
+__gl(glUseProgram(0));
+
+}
+/*
+Set a vec3 uniform.
+*/
+void shdrSetVec3Uniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	vec3			value
+	)
+{
+GLint location = 0;
+
+__gl(glUseProgram(shader));
+__gl(location = glGetUniformLocation(shader, name));
+__gl(glUniform3fv(location, 1, value));
+__gl(glUseProgram(0));
+
+}
+
+/*
 Set a vec4 uniform.
 */
 void shdrSetVec4Uniform

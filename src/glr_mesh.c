@@ -1,13 +1,15 @@
+#include <string.h>
+
 #include "glr_mesh.h"
 #include "glr_shdr.h"
 
 /*
  * Initializes a mesh
- * - position must be specified before initialization
  */
 void glrInitMesh
 	(
 	glrMeshType*	mesh,
+	vec3			meshPos,
 	glrVertDataType dataType,
 	void*			vertData,
 	uint32_t		vertCnt,
@@ -24,11 +26,20 @@ if(!mesh)
 	return;
 	}
 
+/* Set the position */
+memcpy(mesh->pos, meshPos, sizeof(vec3));
+
 /* Find out data size */
 switch(dataType)
 	{
 	case GLR_POS3_TEX2_TYPE:
 		dataSize = sizeof(glrPos3Tex2Type);
+		break;
+	case GLR_POS3_TYPE:
+		dataSize = sizeof(glrPos3Type);
+		break;
+	case GLR_POS3_NORM3_TEX2_TYPE:
+		dataSize = sizeof(glrPos3Norm3Tex2Type);
 		break;
 	default:
 		printf("Invalid vertex data format.\n");
@@ -63,6 +74,14 @@ if(albedoPath)
 glm_mat4_identity(mesh->modelMat);
 glm_translate(mesh->modelMat, mesh->pos);
 
+/* If the vertex data has normals, compute the normal matrix */
+glm_mat4_identity(mesh->normalMat);
+if(dataType == GLR_POS3_NORM3_TEX2_TYPE)
+	{
+	glm_mat4_inv(mesh->modelMat, mesh->normalMat);
+	glm_mat4_transpose(mesh->normalMat);
+	}
+
 }
 
 
@@ -77,3 +96,26 @@ void glrLoadMesh
 __gl(glBindTextureUnit(0, mesh->albedo_tex));
 __gl(glBindVertexBuffer(0, mesh->vbo, 0, mesh->vertSize));
 }
+
+
+/*
+ * Deletes all the OpenGL objects
+ * associated with the mesh. Also
+ * sets everything to 0.
+ */
+void glrFreeMesh
+	(
+	glrMeshType* mesh
+	)
+{
+if(!mesh)
+	{
+	printf("Attempting to delete an invalid mesh.\n");
+	return;
+	}
+
+__gl(glDeleteBuffers(1, &mesh->vbo));
+__gl(glDeleteBuffers(1, &mesh->ebo));
+
+memset(mesh, 0, sizeof(glrMeshType));
+}	

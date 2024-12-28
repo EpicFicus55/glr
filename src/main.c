@@ -6,58 +6,26 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+#include "glr_vertex_data.h"
 #include "glr_core.h"
 #include "glr_camera.h"
 
 static const uint32_t  sWindowHeight = 1200;
 static const uint32_t  sWindowWidth = 1600;
 
-glrPos3Tex2Type triangleData[] = 
-    {
-    { -0.5f, -0.5f, -0.5f,  0.0f, 0.0f },
-    {  0.5f, -0.5f, -0.5f,  1.0f, 0.0f },
-    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
-    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
-    { -0.5f,  0.5f, -0.5f,  0.0f, 1.0f },
-    { -0.5f, -0.5f, -0.5f,  0.0f, 0.0f },
-    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
-    {  0.5f, -0.5f,  0.5f,  1.0f, 0.0f },
-    {  0.5f,  0.5f,  0.5f,  1.0f, 1.0f },
-    {  0.5f,  0.5f,  0.5f,  1.0f, 1.0f },
-    { -0.5f,  0.5f,  0.5f,  0.0f, 1.0f },
-    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
-    { -0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
-    { -0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
-    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
-    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
-    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
-    { -0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
-    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
-    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
-    {  0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
-    {  0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
-    {  0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
-    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
-    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
-    {  0.5f, -0.5f, -0.5f,  1.0f, 1.0f },
-    {  0.5f, -0.5f,  0.5f,  1.0f, 0.0f },
-    {  0.5f, -0.5f,  0.5f,  1.0f, 0.0f },
-    { -0.5f, -0.5f,  0.5f,  0.0f, 0.0f },
-    { -0.5f, -0.5f, -0.5f,  0.0f, 1.0f },
-    { -0.5f,  0.5f, -0.5f,  0.0f, 1.0f },
-    {  0.5f,  0.5f, -0.5f,  1.0f, 1.0f },
-    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
-    {  0.5f,  0.5f,  0.5f,  1.0f, 0.0f },
-    { -0.5f,  0.5f,  0.5f,  0.0f, 0.0f },
-    { -0.5f,  0.5f, -0.5f,  0.0f, 1.0f }
-    };
-
-uint32_t indexData[] = { 0, 1, 3, 1, 2, 3 };
-
 /* Camera parameters */
 vec3 cameraPos =    {0.0f, 0.0f, 3.0f};
 vec3 cameraFront =  {0.0f, 0.0f, -1.0f};
 vec3 cameraUp =     {0.0f, 1.0f, 0.0f};
+
+/* Mesh data */
+vec3 containerPos  = {0.0f, 0.0f, -3.0f};
+vec3 container2Pos = {5.0f, 3.0f,-7.0f};
+
+/* Light data */
+vec3 lightPos = { 5.0f, 1.5f, -1.0f };
+vec4 lightClr = { 1.0f, 1.0f, 1.0f, 1.0f };
+float lightAmbientIntensity = 0.2f;
 
 /*
  * Window creation function
@@ -94,25 +62,22 @@ glrCameraType camera = { 0 };
 glrMeshType containerMesh = { 0 };
 glrMeshType containerMesh2 = { 0 };
 
+glrMeshType lightMesh = { 0 };
+glrLightSourceType lightSource = { 0 };
+
 /* Setup */
 glrInit(sWindowWidth, sWindowHeight);
 glrInitCamera(&camera, cameraPos, cameraFront, cameraUp, 0.005f);
 glrAttachCamera(&camera);
 glfwSetCursorPosCallback(wnd, processGLFWMouse);
 
-containerMesh.pos[0] = 0.0f;
-containerMesh.pos[1] = 0.0f;
-containerMesh.pos[2] = -2.0f;
-
-containerMesh2.pos[0] = 10.0f;
-containerMesh2.pos[1] = 3.0f;
-containerMesh2.pos[2] = -2.0f;
-
+/* Initialize objects in the scene */
 glrInitMesh
     (
     &containerMesh,
-    GLR_POS3_TEX2_TYPE,
-    triangleData,
+    containerPos,
+    GLR_POS3_NORM3_TEX2_TYPE,
+    cubeData3p3n2t,
     36, 
     NULL, 
     0, 
@@ -122,27 +87,56 @@ glrInitMesh
 glrInitMesh
     (
     &containerMesh2,
-    GLR_POS3_TEX2_TYPE,
-    triangleData,
+    container2Pos,
+    GLR_POS3_NORM3_TEX2_TYPE,
+    cubeData3p3n2t,
     36, 
     NULL, 
     0, 
     "..\\Assets\\Textures\\container.jpg"
     );
 
+glrInitMesh
+    (
+    &lightMesh,
+    lightPos,
+    GLR_POS3_TYPE,
+    cubeData3p,
+    36,
+    NULL,
+    0,
+    NULL
+    );
+
+glrInitLightSource
+    (
+    &lightSource,
+    lightPos,
+    lightClr,
+    lightAmbientIntensity,
+    &lightMesh
+    );
+
 while(!glfwWindowShouldClose(wnd))
     {
     /* Get keyboard input and update camera accordingly */
     processGLFWInput(wnd, &camera);
-
     glrInitScene(0x01050000);
 
+    /* Optional - render the light mesh */
+    glrRenderLightSource(&lightMesh);
+
+    /* Render the objects in the scene */
     glrRenderMesh(&containerMesh);
     glrRenderMesh(&containerMesh2);
 
     glfwSwapBuffers(wnd);
     glfwPollEvents();
     }
+
+/* Cleanup */
+glrFreeMesh(&containerMesh);
+glrFreeMesh(&containerMesh2);
 
 glfwTerminate();
 

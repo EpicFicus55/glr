@@ -24,6 +24,26 @@ void shdrSetVec4Uniform
 	);
 
 /*
+Set a float uniform.
+*/
+void shdrSetFloatUniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	float			value
+	);
+
+/*
+Set a vec3 uniform.
+*/
+void shdrSetVec3Uniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	vec3			value
+	);
+
+/*
 Set a mat4 uniform.
 */
 void shdrSetMat4Uniform
