@@ -1,4 +1,7 @@
 #include <string.h>
+
+#include "stb/stb_image.h"
+
 #include "glad/glad.h"
 #include "glr_camera.h"
 #include "glr_core.h"
@@ -102,6 +105,7 @@ glm_mat4_identity(GLR_core.projMat);
 
 glm_perspective(45.0f, ((float)GLR_core.windowWidth / (float)GLR_core.windowHeight), 0.1f, 100.0f, GLR_core.projMat);
 
+stbi_set_flip_vertically_on_load(1);
 }
 
 
@@ -206,7 +210,7 @@ __gl(glUseProgram(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG]));
 if(mesh->ebo)
 	{
 	__gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo));
-	__gl(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+	__gl(glDrawElements(GL_TRIANGLES, mesh->indexCnt, GL_UNSIGNED_INT, 0));
 	}
 else
 	{

@@ -19,7 +19,7 @@ vec3 cameraFront =  {0.0f, 0.0f, -1.0f};
 vec3 cameraUp =     {0.0f, 1.0f, 0.0f};
 
 /* Mesh data */
-vec3 containerPos  = {0.0f, 0.0f, -3.0f};
+vec3 modelPos  = {0.0f, 0.0f, -3.0f};
 vec3 container2Pos = {5.0f, 3.0f,-7.0f};
 
 /* Light data */
@@ -59,7 +59,7 @@ int main(void)
 {
 GLFWwindow* wnd = createWindow(sWindowWidth, sWindowHeight);
 glrCameraType camera = { 0 };
-glrMeshType containerMesh = { 0 };
+glrModelType backpackModel = { 0 };
 glrMeshType containerMesh2 = { 0 };
 
 glrMeshType lightMesh = { 0 };
@@ -72,17 +72,11 @@ glrAttachCamera(&camera);
 glfwSetCursorPosCallback(wnd, processGLFWMouse);
 
 /* Initialize objects in the scene */
-glrInitMesh
+glrInitModel
     (
-    &containerMesh,
-    containerPos,
-    GLR_POS3_NORM3_TEX2_TYPE,
-    cubeData3p3n2t,
-    36, 
-    NULL, 
-    0, 
-    "..\\Assets\\Textures\\container2.png",
-    "..\\Assets\\Textures\\container2_specular.png"
+    &backpackModel,
+    "backpack",
+    modelPos
     );
 
 glrInitMesh
@@ -130,7 +124,10 @@ while(!glfwWindowShouldClose(wnd))
     glrRenderLightSource(&lightMesh);
 
     /* Render the objects in the scene */
-    glrRenderMesh(&containerMesh);
+    for(unsigned int i = 0; i < backpackModel.meshCount;i++)
+        { 
+        glrRenderMesh(&backpackModel.meshArray[i]);
+        }
     glrRenderMesh(&containerMesh2);
 
     glfwSwapBuffers(wnd);
@@ -138,7 +135,6 @@ while(!glfwWindowShouldClose(wnd))
     }
 
 /* Cleanup */
-glrFreeMesh(&containerMesh);
 glrFreeMesh(&containerMesh2);
 
 glfwTerminate();

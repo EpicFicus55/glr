@@ -4,6 +4,7 @@
 #include "glr_types.h"
 
 #define GLR_LIGHT_SOURCE_MAX 10
+#define GLR_TEXTURES_DIR	"..\\Assets\\Textures\\"
 
 typedef enum
 	{
@@ -21,7 +22,7 @@ typedef enum
 	GLR_SHADER_3P3N2T_MVP_PHONG,
 
 	GLR_SHADER_MAX
-	} glrShaderProgramType;\
+	} glrShaderProgramType;
 
 /*
  * Initializes the GLR rendering library
@@ -59,17 +60,16 @@ void glrInitScene
 	uint32_t clr
 	);
 
-
 /*
- * Initializes a mesh
+ * Initializes a model from a given .obj file.
+ * 
  */
-void glrInitMeshFromModel
+void glrInitModel
 	(
-	glrMeshType*	mesh,
-	char*			modelPath,
-	vec3			meshPos
+	glrModelType*	mesh,
+	char*			modelName,
+	vec3			modelPos
 	);
-
 
 /*
  * Initializes a mesh

@@ -28,6 +28,10 @@ typedef struct {
 	vec2		tex;
 	} glrPos3Norm3Tex2Type;
 
+typedef struct {
+	char		 path[128];
+	unsigned int glHndl;
+	} glrTextureType;
 typedef struct 
 	{
 	/* Buffer handles */
@@ -59,3 +63,10 @@ typedef struct {
 	glrMeshType* mesh;
 
 } glrLightSourceType;
+
+typedef struct {
+	glrMeshType*	meshArray;
+	unsigned int	meshCount;
+
+	vec3			modelPos;
+	} glrModelType ;

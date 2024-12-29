@@ -14,6 +14,7 @@ add_executable(glr
 
 add_subdirectory(glfw)
 add_subdirectory(cglm EXCLUDE_FROM_ALL)
+add_subdirectory(assimp)
 
 find_package(OpenGL REQUIRED)
 
@@ -21,9 +22,11 @@ include_directories(
     ${OPENGL_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
     include/
+    assimp/incldue
 )
 
 target_link_libraries(glr
     glfw
     cglm_headers
+    assimp
 )
