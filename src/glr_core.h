@@ -63,6 +63,17 @@ void glrInitScene
 /*
  * Initializes a mesh
  */
+void glrInitMeshFromModel
+	(
+	glrMeshType*	mesh,
+	char*			modelPath,
+	vec3			meshPos
+	);
+
+
+/*
+ * Initializes a mesh
+ */
 void glrInitMesh
 	(
 	glrMeshType*	mesh,
@@ -72,7 +83,8 @@ void glrInitMesh
 	uint32_t		vertCnt,
 	uint32_t*		indices,
 	uint32_t		indexCount,
-	char*			albedoPath
+	char*			albedoPath,
+	char*			specularPath
 	);
 
 /*

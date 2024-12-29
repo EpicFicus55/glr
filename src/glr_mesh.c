@@ -15,7 +15,8 @@ void glrInitMesh
 	uint32_t		vertCnt,
 	uint32_t*		indices,
 	uint32_t		indexCount,
-	char*			albedoPath
+	char*			albedoPath,
+	char*			specularPath
 	)
 {
 size_t dataSize = 0;
@@ -69,6 +70,10 @@ if(albedoPath)
 	{ 
 	mesh->albedo_tex = glrInitTexture(albedoPath);
 	}
+if(specularPath)
+	{ 
+	mesh->specular_tex = glrInitTexture(specularPath);
+	}
 
 /* Initialize the model matrix */
 glm_mat4_identity(mesh->modelMat);
@@ -94,6 +99,8 @@ void glrLoadMesh
 	)
 {
 __gl(glBindTextureUnit(0, mesh->albedo_tex));
+__gl(glBindTextureUnit(1, mesh->specular_tex));
+
 __gl(glBindVertexBuffer(0, mesh->vbo, 0, mesh->vertSize));
 }
 
@@ -116,6 +123,7 @@ if(!mesh)
 
 __gl(glDeleteBuffers(1, &mesh->vbo));
 __gl(glDeleteBuffers(1, &mesh->ebo));
+__gl(glDeleteTextures(1, &mesh->albedo_tex));
 
 memset(mesh, 0, sizeof(glrMeshType));
 }	

@@ -81,7 +81,8 @@ glrInitMesh
     36, 
     NULL, 
     0, 
-    "..\\Assets\\Textures\\container.jpg"
+    "..\\Assets\\Textures\\container2.png",
+    "..\\Assets\\Textures\\container2_specular.png"
     );
 
 glrInitMesh
@@ -93,7 +94,8 @@ glrInitMesh
     36, 
     NULL, 
     0, 
-    "..\\Assets\\Textures\\container.jpg"
+    "..\\Assets\\Textures\\container2.png",
+    "..\\Assets\\Textures\\container2_specular.png"
     );
 
 glrInitMesh
@@ -105,6 +107,7 @@ glrInitMesh
     36,
     NULL,
     0,
+    NULL,
     NULL
     );
 

@@ -10,6 +10,7 @@ uniform float uLightAmbientIntensity;
 uniform vec3  uCameraPos;
 
 uniform sampler2D albedoTex;
+uniform sampler2D specularTex;
 
 out vec4 FragColor;
 
@@ -39,7 +40,7 @@ diffuse = diff * texture(albedoTex, vTexCoords);
 viewDir = normalize(uCameraPos - vFragPos);
 reflectDir = reflect(-lightDir, norm);
 spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-specular = 0.5 * spec * uLightColor;
+specular = texture(specularTex, vTexCoords) * spec * uLightColor;
 
 FragColor = (diffuse + ambientLight + specular);
 

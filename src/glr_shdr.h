@@ -34,6 +34,16 @@ void shdrSetFloatUniform
 	);
 
 /*
+Set an int uniform.
+*/
+void shdrSetIntUniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	int	value
+	);
+
+/*
 Set a vec3 uniform.
 */
 void shdrSetVec3Uniform

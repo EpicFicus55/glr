@@ -190,9 +190,11 @@ shdrSetVec3Uniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "uLightPos", GLR_
 shdrSetVec4Uniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "uLightColor", GLR_core.lightSource->clr);
 shdrSetFloatUniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "uLightAmbientIntensity", GLR_core.lightSource->ambientIntensity);
 
+shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "uNormalMat", mesh->normalMat);
 shdrSetVec3Uniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "uCameraPos", GLR_core.camera->pos);
 
-shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "uNormalMat", mesh->normalMat);
+shdrSetIntUniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "albedoTex", 0);
+shdrSetIntUniform(GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG], "specularTex", 1);
 
 __gl(glEnable(GL_DEPTH_TEST));
 

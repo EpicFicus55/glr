@@ -46,6 +46,7 @@ typedef struct
 
 	/* Texture handles */
 	uint32_t	albedo_tex;
+	uint32_t	specular_tex;
 	} glrMeshType;
 
 typedef struct {

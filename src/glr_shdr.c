@@ -142,6 +142,26 @@ __gl(glUseProgram(0));
 
 }
 
+
+/*
+Set an int uniform.
+*/
+void shdrSetIntUniform
+	(
+	unsigned int	shader,
+	const char*		name,
+	int				value
+	)
+{
+GLint location = 0;
+
+__gl(glUseProgram(shader));
+__gl(location = glGetUniformLocation(shader, name));
+__gl(glUniform1i(location, value));
+__gl(glUseProgram(0));
+
+}
+
 /*
  * Compiles a .glsl file provided as argument.
  */
