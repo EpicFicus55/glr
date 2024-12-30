@@ -6,6 +6,7 @@
 
 #include "glr_mesh.h"
 #include "glr_shdr.h"
+#include "glr_vertex_data.h"
 
 static unsigned int gMeshIdx = 0;
 static char pathToModel[128];
@@ -164,6 +165,33 @@ modelNodeProcess(model, scene->mRootNode, scene);
 }
 
 
+
+/*
+ * Loads a mesh for rendering
+ */
+void glrInitSkyboxMesh
+	(
+	glrSkyboxMeshType* mesh,
+	unsigned char* skyboxPath
+	)
+{
+if(!mesh || !skyboxPath)
+	{
+	printf("Invalid skybox mesh or path.\n");
+	return;
+	}
+
+mesh->cubeMapTex = glrInitCubemap(skyboxPath);
+mesh->vertCnt = 36;
+mesh->vertSize = sizeof(GLR_POS3_TYPE);
+
+/* Initialize the buffers */
+__gl(glCreateBuffers(1, &mesh->vbo));
+__gl(glNamedBufferData(mesh->vbo, mesh->vertSize * mesh->vertCnt, (void*)skyboxVertices, GL_STATIC_DRAW));
+
+}
+
+
 /*
  * Loads a mesh for rendering
  */
@@ -201,6 +229,30 @@ __gl(glDeleteTextures(1, &mesh->albedo_tex));
 
 memset(mesh, 0, sizeof(glrMeshType));
 }	
+
+
+/*
+ * Deletes all the OpenGL objects
+ * associated with the model. Also
+ * sets everything to 0.
+ */
+void glrFreeModel
+	(
+	glrModelType* model
+	)
+{
+if(!model)
+	{
+	printf("Attempting to delete an invalid model.\n");
+	return;
+	}
+for(unsigned int i = 0; i < model->meshCount; i++)
+	{
+	glrFreeMesh(&model->meshArray[i]);
+	}
+
+free(model->meshArray);
+}
 
 
 /*

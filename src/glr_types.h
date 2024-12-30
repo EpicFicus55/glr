@@ -12,7 +12,10 @@ typedef enum
 	GLR_UNKNOWN_TYPE
 	} glrVertDataType;
 
-
+typedef struct {
+	uint32_t width;
+	uint32_t height;
+	} glrDimType;
 typedef struct {
 	vec3		pos;
 	} glrPos3Type;
@@ -31,6 +34,7 @@ typedef struct {
 typedef struct {
 	char		 path[128];
 	unsigned int glHndl;
+	unsigned int type; /* GL_TEXTURE_2D, GL_CUBEMAP, etc*/
 	} glrTextureType;
 typedef struct 
 	{
@@ -52,6 +56,19 @@ typedef struct
 	uint32_t	albedo_tex;
 	uint32_t	specular_tex;
 	} glrMeshType;
+
+typedef struct 
+	{
+	/* Buffer handles */
+	uint32_t	vbo;
+
+	/* Data information */
+	size_t		vertSize; /* Size of one vertex */
+	size_t		vertCnt;  /* Number of vertices  */
+
+	/* Texture handles */
+	uint32_t	cubeMapTex;
+	} glrSkyboxMeshType;
 
 typedef struct {
 	vec3		pos;

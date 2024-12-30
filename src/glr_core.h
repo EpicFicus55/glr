@@ -4,7 +4,6 @@
 #include "glr_types.h"
 
 #define GLR_LIGHT_SOURCE_MAX 10
-#define GLR_TEXTURES_DIR	"..\\Assets\\Textures\\"
 
 typedef enum
 	{
@@ -20,6 +19,7 @@ typedef enum
 	GLR_SHADER_3P2T_MVP = 0,
 	GLR_SHADER_3P_MVP,
 	GLR_SHADER_3P3N2T_MVP_PHONG,
+	GLR_SHADER_SKYBOX,
 
 	GLR_SHADER_MAX
 	} glrShaderProgramType;
@@ -106,6 +106,61 @@ void glrInitLightSource
 void glrRenderMesh
 	(
 	glrMeshType* mesh
+	);
+
+/*
+ * Renders a model
+ */
+void glrRenderModel
+	(
+	glrModelType* model
+	);
+
+/*
+ * Loads a mesh for rendering
+ */
+void glrInitSkyboxMesh
+	(
+	glrSkyboxMeshType* mesh,
+	unsigned char* skyboxPath
+	);
+
+/*
+ * Renders a skybox
+ */
+void glrRenderSkybox
+	(
+	glrSkyboxMeshType* skybox
+	);
+
+/*
+ * Deletes all the OpenGL objects
+ * associated with the mesh. Also
+ * sets everything to 0.
+ */
+void glrFreeMesh
+	(
+	glrMeshType* mesh
+	);
+
+/*
+ * Deletes all the OpenGL objects
+ * associated with the model. Also
+ * sets everything to 0.
+ */
+void glrFreeModel
+	(
+	glrModelType* model
+	);
+
+/* 
+ * Deletes all the OpenGL objects
+ * associated with the skybox. Also
+ * sets everything to 0.
+ */
+void glrFreeSkybox
+	(
+	glrSkyboxMeshType*	skybox
 	);
 
 

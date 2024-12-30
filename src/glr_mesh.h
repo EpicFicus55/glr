@@ -12,12 +12,3 @@ void glrLoadMesh
 	glrMeshType* mesh
 	);
 
-/*
- * Deletes all the OpenGL objects
- * associated with the mesh. Also
- * sets everything to 0.
- */
-void glrFreeMesh
-	(
-	glrMeshType* mesh
-	);

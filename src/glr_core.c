@@ -23,6 +23,7 @@ typedef struct {
 	mat4		viewMat;
 	mat4		projMat;
 
+	glrSkyboxMeshType skybox;
 	glrLightSourceType* lightSource;
 }glr_core_t;
 
@@ -59,6 +60,12 @@ glrGenerateShaderProgram
 	&GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG],
 	"..\\src\\glsl\\3p3n2t_mvp_phong.vert", 
 	"..\\src\\glsl\\3p3n2t_mvp_phong.frag"
+	);
+glrGenerateShaderProgram
+	(
+	&GLR_core.shdr[GLR_SHADER_SKYBOX],
+	"..\\src\\glsl\\skybox.vert", 
+	"..\\src\\glsl\\skybox.frag"
 	);
 
 __gl(glCreateVertexArrays(GLR_VERTEX_FORMAT_MAX, GLR_core.vao));
@@ -105,7 +112,8 @@ glm_mat4_identity(GLR_core.projMat);
 
 glm_perspective(45.0f, ((float)GLR_core.windowWidth / (float)GLR_core.windowHeight), 0.1f, 100.0f, GLR_core.projMat);
 
-stbi_set_flip_vertically_on_load(1);
+
+glrInitSkyboxMesh(&GLR_core.skybox, "skybox");
 }
 
 
@@ -222,6 +230,51 @@ __gl(glBindVertexArray(0));
 __gl(glDisable(GL_DEPTH_TEST));
 }
 
+
+/*
+ * Renders a model
+ */
+void glrRenderModel
+	(
+	glrModelType* model
+	)
+{
+for(unsigned int i = 0; i < model->meshCount;i++)
+    { 
+    glrRenderMesh(&model->meshArray[i]);
+    }
+}
+
+
+
+/*
+ * Renders a skybox
+ */
+void glrRenderSkybox
+	(
+	glrSkyboxMeshType* skybox
+	)
+{
+mat3 aux;
+mat4 view;
+
+glm_mat4_pick3(GLR_core.camera->lookAtMatrix, aux);
+glm_mat4_identity(view);
+glm_mat4_ins3(aux, view);
+shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_SKYBOX], "viewMat", view);
+shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_SKYBOX], "projMat", GLR_core.projMat);
+
+__gl(glEnable(GL_DEPTH_TEST));
+__gl(glDepthFunc(GL_LEQUAL));
+__gl(glBindVertexArray(GLR_core.vao[GLR_VERTEX_FORMAT_3P]));
+__gl(glUseProgram(GLR_core.shdr[GLR_SHADER_SKYBOX]));
+__gl(glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->cubeMapTex));
+
+__gl(glDrawArrays(GL_TRIANGLES, 0, skybox->vertCnt));
+__gl(glUseProgram(0));
+__gl(glBindVertexArray(0));
+__gl(glDisable(GL_DEPTH_TEST));
+}
 
 /*
  * Renders a light source mesh

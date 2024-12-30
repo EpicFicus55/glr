@@ -27,6 +27,9 @@ vec3 lightPos = { 5.0f, 1.5f, -1.0f };
 vec4 lightClr = { 1.0f, 1.0f, 1.0f, 1.0f };
 float lightAmbientIntensity = 0.2f;
 
+/* Skybox */
+glrSkyboxMeshType skybox;
+
 /*
  * Window creation function
  */
@@ -114,28 +117,35 @@ glrInitLightSource
     &lightMesh
     );
 
+glrInitSkyboxMesh
+    (
+    &skybox,
+    "skybox"
+    );
+
 while(!glfwWindowShouldClose(wnd))
     {
     /* Get keyboard input and update camera accordingly */
     processGLFWInput(wnd, &camera);
     glrInitScene(0x01050000);
-
+     
     /* Optional - render the light mesh */
     glrRenderLightSource(&lightMesh);
 
     /* Render the objects in the scene */
-    for(unsigned int i = 0; i < backpackModel.meshCount;i++)
-        { 
-        glrRenderMesh(&backpackModel.meshArray[i]);
-        }
+    glrRenderModel(&backpackModel);
     glrRenderMesh(&containerMesh2);
+
+    glrRenderSkybox(&skybox);
 
     glfwSwapBuffers(wnd);
     glfwPollEvents();
     }
 
 /* Cleanup */
+glrFreeModel(&backpackModel);
 glrFreeMesh(&containerMesh2);
+glrFreeSkybox(&skybox);
 
 glfwTerminate();
 

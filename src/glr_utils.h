@@ -13,5 +13,5 @@
 			} \
 		} while(0)
 #else
-	#define	_gl( stmt ) (stmt)
+	#define	__gl( stmt ) (stmt)
 #endif
