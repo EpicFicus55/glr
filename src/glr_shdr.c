@@ -34,15 +34,21 @@ unsigned int	vertShdr = 0;
 unsigned int	fragShdr = 0;
 int				success = 0;
 char			infoLog[ 512 ];
+char			vertShaderPath[128];
+char			fragShaderPath[128];
 
 /* Clear _info_log */
 memset(&infoLog[ 0 ], 0, sizeof(infoLog));
 
+/* Construct the shader names */
+sprintf(vertShaderPath, "%s%s", GLR_SHADER_DIR, vertShaderName);
+sprintf(fragShaderPath, "%s%s", GLR_SHADER_DIR, fragShaderName);
+
 /* Compile the vertex shader */
-compileShader(&vertShdr, GL_VERTEX_SHADER, vertShaderName);
+compileShader(&vertShdr, GL_VERTEX_SHADER, vertShaderPath);
 
 /* Compile the fragment shader */
-compileShader(&fragShdr, GL_FRAGMENT_SHADER, fragShaderName);
+compileShader(&fragShdr, GL_FRAGMENT_SHADER, fragShaderPath);
 
 /* Create a new shader program */
 __gl(*shdrProg = glCreateProgram());

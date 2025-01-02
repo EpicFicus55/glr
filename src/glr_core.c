@@ -46,26 +46,26 @@ GLR_core.windowHeight = height;
 glrGenerateShaderProgram
 	(
 	&GLR_core.shdr[GLR_SHADER_3P2T_MVP],
-	"..\\src\\glsl\\3p2t_mvp.vert", 
-	"..\\src\\glsl\\3p2t_mvp.frag"
+	"3p2t_mvp.vert", 
+	"3p2t_mvp.frag"
 	);
 glrGenerateShaderProgram
 	(
 	&GLR_core.shdr[GLR_SHADER_3P_MVP],
-	"..\\src\\glsl\\3p_mvp.vert", 
-	"..\\src\\glsl\\3p_mvp.frag"
+	"3p_mvp.vert", 
+	"3p_mvp.frag"
 	);
 glrGenerateShaderProgram
 	(
 	&GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG],
-	"..\\src\\glsl\\3p3n2t_mvp_phong.vert", 
-	"..\\src\\glsl\\3p3n2t_mvp_phong.frag"
+	"3p3n2t_mvp_phong.vert", 
+	"3p3n2t_mvp_phong.frag"
 	);
 glrGenerateShaderProgram
 	(
 	&GLR_core.shdr[GLR_SHADER_SKYBOX],
-	"..\\src\\glsl\\skybox.vert", 
-	"..\\src\\glsl\\skybox.frag"
+	"skybox.vert", 
+	"skybox.frag"
 	);
 
 __gl(glCreateVertexArrays(GLR_VERTEX_FORMAT_MAX, GLR_core.vao));

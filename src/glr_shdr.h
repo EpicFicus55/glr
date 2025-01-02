@@ -2,6 +2,8 @@
 
 #include "cglm/cglm.h"
 
+#define GLR_SHADER_DIR "..\\src\\glsl\\"
+
 /*
  * Compiles and links a shader program based 
  * on the provided .glsl files.
