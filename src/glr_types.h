@@ -61,6 +61,28 @@ typedef struct
 	{
 	/* Buffer handles */
 	uint32_t	vbo;
+	uint32_t	ebo;
+
+	/* Data information */
+	size_t		vertSize; /* Size of one vertex */
+	size_t		vertCnt;  /* Number of vertices  */
+	size_t		indexCnt; /* Number of idices (optional) */
+
+	/* Position and model matrix */
+	vec3		pos;
+	mat4		modelMat;
+	uint32_t	numStrips;
+	uint32_t	numVertsPerStrip;
+
+	/* Texture handles */
+	//uint32_t	albedo_tex;
+	//uint32_t	specular_tex;
+	} glrTerrainMeshType;
+
+typedef struct 
+	{
+	/* Buffer handles */
+	uint32_t	vbo;
 
 	/* Data information */
 	size_t		vertSize; /* Size of one vertex */

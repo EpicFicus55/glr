@@ -101,6 +101,16 @@ void glrInitLightSource
 
 
 /*
+ * Initializes a mesh based on a heightmap.
+ */
+void glrInitTerrain
+	(
+	glrTerrainMeshType*	terrainMesh,
+	const char*			heightmapPath
+	);
+
+
+/*
  * Renders a mesh
  */
 void glrRenderMesh
@@ -131,6 +141,15 @@ void glrInitSkyboxMesh
 void glrRenderSkybox
 	(
 	glrSkyboxMeshType* skybox
+	);
+
+
+/*
+ * Renders a terrain mesh
+ */
+void glrRenderTerrainMesh
+	(
+	glrTerrainMeshType* terrain
 	);
 
 /*

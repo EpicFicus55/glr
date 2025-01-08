@@ -1,8 +1,11 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#include "stb/stb_image.h"
 
 #include "glr_mesh.h"
 #include "glr_shdr.h"
@@ -183,12 +186,104 @@ if(!mesh || !skyboxPath)
 
 mesh->cubeMapTex = glrInitCubemap(skyboxPath);
 mesh->vertCnt = 36;
-mesh->vertSize = sizeof(GLR_POS3_TYPE);
+mesh->vertSize = sizeof(glrPos3Type);
 
 /* Initialize the buffers */
 __gl(glCreateBuffers(1, &mesh->vbo));
 __gl(glNamedBufferData(mesh->vbo, mesh->vertSize * mesh->vertCnt, (void*)skyboxVertices, GL_STATIC_DRAW));
 
+}
+
+
+
+/*
+ * Initializes a mesh based on a heightmap.
+ */
+void glrInitTerrain
+	(
+	glrTerrainMeshType*	terrainMesh,
+	const char*			heightmapPath
+	)
+{
+if(!terrainMesh || !heightmapPath)
+	{
+	printf("Invalid terrain mesh or heightmap path.\n");
+	return;
+	}
+
+unsigned char* heightmapData = NULL;
+int32_t width, height, nrChannels;
+glrPos3Type* vertexData;
+uint32_t*	indexData;
+uint32_t	currVertex = 0;
+uint32_t	currIndex = 0;
+
+
+heightmapData = stbi_load(heightmapPath, &width, &height, &nrChannels, 0);
+if(!heightmapData)
+	{
+	printf("Unable to load heightmap data.\n");
+	return;
+	}
+
+terrainMesh->vertCnt = (size_t)(width * height);
+terrainMesh->vertSize = sizeof(glrPos3Type);
+terrainMesh->indexCnt =(size_t)(width * (height - 1) * 2);
+terrainMesh->numStrips = (uint32_t)(height - 1);
+terrainMesh->numVertsPerStrip = width * 2;
+glm_mat4_identity(terrainMesh->modelMat);
+
+vertexData = (glrPos3Type*)malloc((size_t)(terrainMesh->vertCnt * sizeof(glrPos3Type)));
+if(!vertexData)
+	{
+	printf("Memory allocation for heightmap failed.\n");
+	return;
+	}
+
+indexData = (uint32_t*)malloc((size_t)(terrainMesh->indexCnt * sizeof(uint32_t)));
+if(!vertexData)
+	{
+	printf("Memory allocation for heightmap failed.\n");
+	return;
+	}
+
+/* Load the vertex data */
+for(uint32_t i = 0; i < height; i++)
+	{
+	for(uint32_t j = 0; j < width; j++)
+		{
+		unsigned char* texel = heightmapData + (j + width * i) * nrChannels;
+		unsigned char y = texel[0];
+
+		vertexData[currVertex].pos[0] = -height/2.0f;
+		vertexData[currVertex].pos[1] = 0.0f;
+		vertexData[currVertex].pos[2] = -width/2.0f;
+		currVertex++;
+		}
+	}
+
+/* Load the index data */
+for(uint32_t i = 0; i < height - 1; i++)
+	{
+	for(uint32_t j = 0; j < width; j++)
+		{
+		for(uint32_t k = 0; k < 2; k++)
+			{
+			indexData[currIndex++] = j + width * (i+k);
+			}
+		}
+	}
+
+__gl(glCreateBuffers(1, &terrainMesh->vbo));
+__gl(glCreateBuffers(1, &terrainMesh->ebo));
+
+__gl(glNamedBufferData(terrainMesh->vbo, sizeof(glrPos3Type) * (terrainMesh->vertCnt), vertexData, GL_STATIC_DRAW));
+__gl(glNamedBufferData(terrainMesh->ebo, sizeof(uint32_t) * (terrainMesh->indexCnt), indexData, GL_STATIC_DRAW));
+
+/* Cleanup */
+stbi_image_free(heightmapData);
+free(vertexData);
+free(indexData);
 }
 
 
