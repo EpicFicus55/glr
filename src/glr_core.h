@@ -18,6 +18,7 @@ typedef enum
 	{
 	GLR_SHADER_3P2T_MVP = 0,
 	GLR_SHADER_3P_MVP,
+	GLR_SHADER_3P_MVP_TERRAIN,
 	GLR_SHADER_3P3N2T_MVP_PHONG,
 	GLR_SHADER_SKYBOX,
 
@@ -180,6 +181,16 @@ void glrFreeModel
 void glrFreeSkybox
 	(
 	glrSkyboxMeshType*	skybox
+	);
+
+/* 
+ * Deletes all the OpenGL objects
+ * associated with the terrain mesh. Also
+ * sets everything to 0.
+ */
+void glrFreeTerrain
+	(
+	glrTerrainMeshType*	terrain
 	);
 
 

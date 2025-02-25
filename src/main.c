@@ -14,7 +14,7 @@ static const uint32_t  sWindowHeight = 1200;
 static const uint32_t  sWindowWidth = 1600;
 
 /* Camera parameters */
-vec3 cameraPos =    {0.0f, 0.0f, 3.0f};
+vec3 cameraPos =    {0.0f, 00.0f, 3.0f};
 vec3 cameraFront =  {0.0f, 0.0f, -1.0f};
 vec3 cameraUp =     {0.0f, 1.0f, 0.0f};
 
@@ -81,13 +81,13 @@ glrInitTerrain
     &terrainMesh,
     "..\\Assets\\Heightmaps\\iceland_heightmap.png"
     );
-//glrInitModel
-//    (
-//    &backpackModel,
-//    "backpack",
-//    modelPos
-//    );
-//
+glrInitModel
+    (
+    &backpackModel,
+    "backpack",
+    modelPos
+    );
+
 glrInitMesh
     (
     &containerMesh2,
@@ -100,20 +100,20 @@ glrInitMesh
     "..\\Assets\\Textures\\container2.png",
     "..\\Assets\\Textures\\container2_specular.png"
     );
-//
-//glrInitMesh
-//    (
-//    &lightMesh,
-//    lightPos,
-//    GLR_POS3_TYPE,
-//    cubeData3p,
-//    36,
-//    NULL,
-//    0,
-//    NULL,
-//    NULL
-//    );
-//
+
+glrInitMesh
+    (
+    &lightMesh,
+    lightPos,
+    GLR_POS3_TYPE,
+    cubeData3p,
+    36,
+    NULL,
+    0,
+    NULL,
+    NULL
+    );
+
 glrInitLightSource
     (
     &lightSource,
@@ -138,17 +138,18 @@ while(!glfwWindowShouldClose(wnd))
     /* Optional - render the light mesh */
     glrRenderLightSource(&lightMesh);
 
-    ///* Render the objects in the scene */
-    //glrRenderModel(&backpackModel);
+    /* Render the objects in the scene */
+    glrRenderModel(&backpackModel);
     glrRenderMesh(&containerMesh2);
     glrRenderTerrainMesh(&terrainMesh);
-    //glrRenderSkybox(&skybox);
+    glrRenderSkybox(&skybox);
 
     glfwSwapBuffers(wnd);
     glfwPollEvents();
     }
 
 /* Cleanup */
+glrFreeTerrain(&terrainMesh);
 glrFreeModel(&backpackModel);
 glrFreeMesh(&containerMesh2);
 glrFreeSkybox(&skybox);

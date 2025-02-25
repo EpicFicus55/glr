@@ -217,6 +217,7 @@ glrPos3Type* vertexData;
 uint32_t*	indexData;
 uint32_t	currVertex = 0;
 uint32_t	currIndex = 0;
+float yScale = 64.0f / 256.0f, yShift = -30.0f;
 
 
 heightmapData = stbi_load(heightmapPath, &width, &height, &nrChannels, 0);
@@ -255,9 +256,9 @@ for(uint32_t i = 0; i < height; i++)
 		unsigned char* texel = heightmapData + (j + width * i) * nrChannels;
 		unsigned char y = texel[0];
 
-		vertexData[currVertex].pos[0] = -height/2.0f;
-		vertexData[currVertex].pos[1] = 0.0f;
-		vertexData[currVertex].pos[2] = -width/2.0f;
+		vertexData[currVertex].pos[0] = -height/2.0f + i;
+		vertexData[currVertex].pos[1] = (int)y * yScale + yShift;
+		vertexData[currVertex].pos[2] = -width/2.0f + j;
 		currVertex++;
 		}
 	}
@@ -349,6 +350,28 @@ for(unsigned int i = 0; i < model->meshCount; i++)
 free(model->meshArray);
 }
 
+
+/* 
+ * Deletes all the OpenGL objects
+ * associated with the terrain mesh. Also
+ * sets everything to 0.
+ */
+void glrFreeTerrain
+	(
+	glrTerrainMeshType*	terrain
+	)
+{
+if(!terrain)
+	{
+	printf("Attempting to delete an invalid terrain mesh.\n");
+	return;
+	}
+
+__gl(glDeleteBuffers(1, &terrain->vbo));
+__gl(glDeleteBuffers(1, &terrain->ebo));
+
+memset(terrain, 0, sizeof(glrTerrainMeshType));
+}
 
 /*
  * Function for recursively processing a model node.

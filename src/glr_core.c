@@ -57,6 +57,12 @@ glrGenerateShaderProgram
 	);
 glrGenerateShaderProgram
 	(
+	&GLR_core.shdr[GLR_SHADER_3P_MVP_TERRAIN],
+	"3p_mvp_terrain.vert", 
+	"3p_mvp_terrain.frag"
+	);
+glrGenerateShaderProgram
+	(
 	&GLR_core.shdr[GLR_SHADER_3P3N2T_MVP_PHONG],
 	"3p3n2t_mvp_phong.vert", 
 	"3p3n2t_mvp_phong.frag"
@@ -110,7 +116,7 @@ __gl(glViewport(0, 0, GLR_core.windowWidth, GLR_core.windowHeight));
 glm_mat4_identity(GLR_core.viewMat);
 glm_mat4_identity(GLR_core.projMat);
 
-glm_perspective(45.0f, ((float)GLR_core.windowWidth / (float)GLR_core.windowHeight), 0.1f, 100.0f, GLR_core.projMat);
+glm_perspective(45.0f, ((float)GLR_core.windowWidth / (float)GLR_core.windowHeight), 0.1f, 500.0f, GLR_core.projMat);
 
 
 glrInitSkyboxMesh(&GLR_core.skybox, "skybox");
@@ -287,16 +293,16 @@ void glrRenderTerrainMesh
 	glrTerrainMeshType* terrain
 	)
 {
-vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P_MVP], "modelMat", terrain->modelMat);
-shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P_MVP], "viewMat", GLR_core.camera->lookAtMatrix);
-shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P_MVP], "projMat", GLR_core.projMat);
-shdrSetVec4Uniform(GLR_core.shdr[GLR_SHADER_3P_MVP], "aClr", color);
+shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P_MVP_TERRAIN], "modelMat", terrain->modelMat);
+shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P_MVP_TERRAIN], "viewMat", GLR_core.camera->lookAtMatrix);
+shdrSetMat4Uniform(GLR_core.shdr[GLR_SHADER_3P_MVP_TERRAIN], "projMat", GLR_core.projMat);
 
+__gl(glEnable(GL_DEPTH_TEST));
 __gl(glBindVertexArray(GLR_core.vao[GLR_VERTEX_FORMAT_3P]));
-__gl(glUseProgram(GLR_core.shdr[GLR_SHADER_3P_MVP]));
+__gl(glUseProgram(GLR_core.shdr[GLR_SHADER_3P_MVP_TERRAIN]));
 __gl(glBindVertexBuffer(0, terrain->vbo, 0, terrain->vertSize));
 __gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrain->ebo));
+//__gl(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 for(uint32_t i = 0; i < terrain->numStrips; i++)
 	{
 	__gl(glDrawElements
@@ -304,14 +310,16 @@ for(uint32_t i = 0; i < terrain->numStrips; i++)
 			GL_TRIANGLE_STRIP, 
 			terrain->numVertsPerStrip, 
 			GL_UNSIGNED_INT,
-			(void*)(sizeof(uint32_t) * terrain->numVertsPerStrip * i)
+			(void*)(sizeof(uint32_t) * (terrain->numVertsPerStrip) * i)
 			)
 	);
 	}
+//__gl(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 __gl(glBindVertexArray(0));
 __gl(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 __gl(glUseProgram(0));
 __gl(glBindVertexArray(0));
+__gl(glDisable(GL_DEPTH_TEST));
 }
 
 /*
