@@ -76,11 +76,11 @@ glrAttachCamera(&camera);
 glfwSetCursorPosCallback(wnd, processGLFWMouse);
 
 /* Initialize objects in the scene */
-glrInitTerrain
-    (
-    &terrainMesh,
-    "..\\Assets\\Heightmaps\\iceland_heightmap.png"
-    );
+//glrInitTerrain
+//    (
+//    &terrainMesh,
+//    "..\\Assets\\Heightmaps\\iceland_heightmap.png"
+//    );
 glrInitModel
     (
     &backpackModel,
@@ -141,7 +141,7 @@ while(!glfwWindowShouldClose(wnd))
     /* Render the objects in the scene */
     glrRenderModel(&backpackModel);
     glrRenderMesh(&containerMesh2);
-    glrRenderTerrainMesh(&terrainMesh);
+    //glrRenderTerrainMesh(&terrainMesh);
     glrRenderSkybox(&skybox);
 
     glfwSwapBuffers(wnd);
@@ -153,6 +153,7 @@ glrFreeTerrain(&terrainMesh);
 glrFreeModel(&backpackModel);
 glrFreeMesh(&containerMesh2);
 glrFreeSkybox(&skybox);
+glrTeardown();
 
 glfwTerminate();
 

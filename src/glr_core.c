@@ -25,6 +25,8 @@ typedef struct {
 
 	glrSkyboxMeshType skybox;
 	glrLightSourceType* lightSource;
+
+	uint32_t	fbo;
 }glr_core_t;
 
 static glr_core_t GLR_core;
@@ -112,6 +114,9 @@ __gl(glBindVertexArray(0));
 
 __gl(glViewport(0, 0, GLR_core.windowWidth, GLR_core.windowHeight));
 
+/* Create the framebuffer */
+__gl(glCreateFramebuffers(1, &GLR_core.fbo));
+
 /* Initialize the View and Projection matrices */
 glm_mat4_identity(GLR_core.viewMat);
 glm_mat4_identity(GLR_core.projMat);
@@ -122,6 +127,28 @@ glm_perspective(45.0f, ((float)GLR_core.windowWidth / (float)GLR_core.windowHeig
 glrInitSkyboxMesh(&GLR_core.skybox, "skybox");
 }
 
+
+/*
+ * Cleans up the shaders et al
+ */
+void glrTeardown
+	(
+	void
+	)
+{
+for(uint8_t i = 0; i < GLR_SHADER_MAX; i++)
+	{
+	__gl(glDeleteProgram(GLR_core.shdr[i]));
+	}
+
+for(uint8_t i = 0; i < GLR_VERTEX_FORMAT_MAX; i++)
+	{
+	__gl(glDeleteVertexArrays(1, &GLR_core.vao[i]));
+	}
+
+__gl(glDeleteFramebuffers(1, &GLR_core.fbo));
+
+}
 
 /*
  * Initializes the GLR rendering library

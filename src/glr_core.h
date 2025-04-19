@@ -35,6 +35,14 @@ void glrInit
 	);
 
 /*
+ * Cleans up the shaders et al
+ */
+void glrTeardown
+	(
+	void
+	);
+
+/*
  * Initializes the GLR rendering library
  */
 void glrAttachCamera
