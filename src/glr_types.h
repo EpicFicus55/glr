@@ -36,6 +36,15 @@ typedef struct {
 	unsigned int glHndl;
 	unsigned int type; /* GL_TEXTURE_2D, GL_CUBEMAP, etc*/
 	} glrTextureType;
+
+typedef struct {
+	uint32_t	fbo;
+
+	uint32_t	rbo;
+	uint32_t	colorAttachment;
+
+	} glrFramebufferType;
+
 typedef struct 
 	{
 	/* Buffer handles */

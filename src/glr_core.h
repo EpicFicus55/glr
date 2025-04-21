@@ -15,8 +15,9 @@ typedef enum
 	} glrVertexFormatType;
 
 typedef enum
-	{
-	GLR_SHADER_3P2T_MVP = 0,
+{
+	GLR_SHADER_3P2T = 0,
+	GLR_SHADER_3P2T_MVP,
 	GLR_SHADER_3P_MVP,
 	GLR_SHADER_3P_MVP_TERRAIN,
 	GLR_SHADER_3P3N2T_MVP_PHONG,
@@ -38,6 +39,15 @@ void glrInit
  * Cleans up the shaders et al
  */
 void glrTeardown
+	(
+	void
+	);
+
+/*
+ * Binds the default framebuffer and renders
+ * the scene as a texture.
+ */
+void glrFinishRender
 	(
 	void
 	);

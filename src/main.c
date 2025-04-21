@@ -144,6 +144,7 @@ while(!glfwWindowShouldClose(wnd))
     //glrRenderTerrainMesh(&terrainMesh);
     glrRenderSkybox(&skybox);
 
+    glrFinishRender();
     glfwSwapBuffers(wnd);
     glfwPollEvents();
     }

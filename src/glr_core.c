@@ -26,7 +26,10 @@ typedef struct {
 	glrSkyboxMeshType skybox;
 	glrLightSourceType* lightSource;
 
-	uint32_t	fbo;
+	glrFramebufferType framebuffer;
+	
+	uint32_t	screen_vbo;
+
 }glr_core_t;
 
 static glr_core_t GLR_core;
@@ -40,11 +43,28 @@ void glrInit
 	uint32_t height
 	)
 {
+/* Quad covering the entire screen to be used as render space */
+glrPos3Tex2Type screen_quad[] =
+	{
+	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+	 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+	-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+	 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+	-1.0f,  1.0f, 0.0f, 0.0f, 1.0f
+	};
+
 /* Set the window properties */
 GLR_core.windowWidth = width;
 GLR_core.windowHeight = height;
 
 /* Compile shaders */
+glrGenerateShaderProgram
+	(
+	&GLR_core.shdr[GLR_SHADER_3P2T],
+	"3p2t.vert", 
+	"3p2t.frag"
+	);
 glrGenerateShaderProgram
 	(
 	&GLR_core.shdr[GLR_SHADER_3P2T_MVP],
@@ -115,14 +135,38 @@ __gl(glBindVertexArray(0));
 __gl(glViewport(0, 0, GLR_core.windowWidth, GLR_core.windowHeight));
 
 /* Create the framebuffer */
-__gl(glCreateFramebuffers(1, &GLR_core.fbo));
+__gl(glCreateFramebuffers(1, &GLR_core.framebuffer.fbo));
+
+/* Create the color attachment */
+__gl(glCreateTextures(GL_TEXTURE_2D, 1, &GLR_core.framebuffer.colorAttachment));
+__gl(glTextureStorage2D(GLR_core.framebuffer.colorAttachment, 1, GL_RGB8, width, height));
+
+__gl(glCreateRenderbuffers(1, &GLR_core.framebuffer.rbo));
+__gl(glNamedRenderbufferStorage(GLR_core.framebuffer.rbo, GL_DEPTH24_STENCIL8, width, height));
+
+/* Bind the color attachment */
+__gl(glNamedFramebufferTexture(GLR_core.framebuffer.fbo, GL_COLOR_ATTACHMENT0, GLR_core.framebuffer.colorAttachment, 0));
+
+/* Bind the renderbuffer for depth/stencil */
+__gl(glNamedFramebufferRenderbuffer(GLR_core.framebuffer.fbo, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, GLR_core.framebuffer.rbo));
+
+if(glCheckNamedFramebufferStatus(GLR_core.framebuffer.fbo, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{ 
+	printf("Incomplete framebuffer.\n");
+	exit(0);
+	}
+
+__gl(glBindFramebuffer(GL_FRAMEBUFFER, GLR_core.framebuffer.fbo));
+
+__gl(glCreateBuffers(1, &GLR_core.screen_vbo));
+__gl(glNamedBufferData(GLR_core.screen_vbo, sizeof(screen_quad), screen_quad, GL_STATIC_DRAW));
+
 
 /* Initialize the View and Projection matrices */
 glm_mat4_identity(GLR_core.viewMat);
 glm_mat4_identity(GLR_core.projMat);
 
 glm_perspective(45.0f, ((float)GLR_core.windowWidth / (float)GLR_core.windowHeight), 0.1f, 500.0f, GLR_core.projMat);
-
 
 glrInitSkyboxMesh(&GLR_core.skybox, "skybox");
 }
@@ -146,8 +190,39 @@ for(uint8_t i = 0; i < GLR_VERTEX_FORMAT_MAX; i++)
 	__gl(glDeleteVertexArrays(1, &GLR_core.vao[i]));
 	}
 
-__gl(glDeleteFramebuffers(1, &GLR_core.fbo));
+__gl(glDeleteRenderbuffers(1, &GLR_core.framebuffer.rbo));
+__gl(glDeleteTextures(1, &GLR_core.framebuffer.colorAttachment));
+__gl(glDeleteFramebuffers(1, &GLR_core.framebuffer.fbo));
 
+}
+
+
+/*
+ * Binds the default framebuffer and renders
+ * the scene as a texture.
+ */
+void glrFinishRender
+	(
+	void
+	)
+{
+/* Bind default framebuffer */
+__gl(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+__gl(glBindVertexArray(GLR_core.vao[GLR_VERTEX_FORMAT_3P2T]));
+__gl(glBindVertexBuffer(0, GLR_core.screen_vbo, 0, sizeof(glrPos3Tex2Type)));
+__gl(glUseProgram(GLR_core.shdr[GLR_SHADER_3P2T]));
+
+/* Bind GLR's main framebuffer as the texture, and draw */
+__gl(glBindTextureUnit(0, GLR_core.framebuffer.colorAttachment));
+__gl(glDrawArrays(GL_TRIANGLES, 0, 6));
+
+/* Clean up */
+__gl(glBindTextureUnit(0, 0));
+__gl(glUseProgram(0));
+__gl(glBindVertexArray(0));
+
+/* Bind GLR's main framebuffer as a render targed */
+__gl(glBindFramebuffer(GL_FRAMEBUFFER, GLR_core.framebuffer.fbo));
 }
 
 /*
